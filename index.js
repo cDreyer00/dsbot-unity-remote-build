@@ -1,4 +1,8 @@
+require("dotenv").config();
 const { Client, GatewayIntentBits } = require('discord.js');
+
+const { getChannels, getGuilds } = require('./src/helpers')
+const { checkConnection } = require('./src/http-requests/httpRequestsHandler')
 
 const client = new Client({
     intents: [
@@ -6,28 +10,14 @@ const client = new Client({
     ]
 });
 
-let initialized = false;
-function initds(TOKEN) {
-    if (initialized) {
-        console.log("discord bot already initialized")
-        return
-    }
+client.on('ready', async () => {
+    console.log("ds bot initialized and running")
 
-    initialized = true;
+    const gtc = getChannels(client).find(item => item.name == "geral")
+    const res = await checkConnection() || "message empty";
+    console.log("RES:", res)
+    gtc.send(res)
+});
 
-    client.on('ready', () => {
-        console.log("ds bot initialized and running")
-        const gtc = getChannels(client).find(item => item.name == "geral")
-        gtc.send("hello from server")
-    });
-
-    client.login(TOKEN);
-}
-
-function getGuilds(client) {
-    return client.guilds.cache.map(item => item)
-}
-
-function getChannels(client) {
-    return client.channels.cache.map(item => item)
-}
+const TOKEN = process.env.TOKEN;
+client.login(TOKEN);
