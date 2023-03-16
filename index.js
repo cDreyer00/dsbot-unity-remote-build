@@ -16,7 +16,7 @@ client.on(Events.ClientReady, async () => {
     await catchFiles(client);
 
     // register commands in the guild (only 1 time needed)
-    // await registerCommands();
+    await registerCommands();
 
     const channels = getChannels(client);
     channels.map((channel) => {
