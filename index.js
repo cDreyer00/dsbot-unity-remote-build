@@ -1,5 +1,5 @@
 require("dotenv").config();
-const { Client, GatewayIntentBits, Events, ContextMenuCommandAssertions } = require('discord.js');
+const { Client, GatewayIntentBits, Events, ContextMenuCommandAssertions, AttachmentBuilder } = require('discord.js');
 
 const { getChannels, getGuilds } = require('./src/helpers')
 const { checkConnection } = require('./src/http-requests/httpRequestsHandler')
@@ -12,7 +12,6 @@ const client = new Client({
 });
 
 client.on(Events.ClientReady, async () => {
-
     // set commands to client
     await catchFiles(client);
 
@@ -22,7 +21,9 @@ client.on(Events.ClientReady, async () => {
     const channels = getChannels(client);
     channels.map((channel) => {
         if (channel.name === 'geral') {
-            channel.send(`I'm alive ${getRandomEmoji()}`);
+            const file = new AttachmentBuilder(`${process.cwd()}/assets/images/relcei_ok.webp`)
+            channel.send(`I'm alive ${getRandomEmoji()}`)
+            channel.send({ files: [file] })
         }
     })
 });
@@ -37,7 +38,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
     if (!command) {
         console.log('command not found')
     }
-    
+
     command.execute(interaction)
 })
 
@@ -50,3 +51,4 @@ function getRandomEmoji() {
 
 const TOKEN = process.env.TOKEN;
 client.login(TOKEN);
+console.log('Discord Bot Running')
